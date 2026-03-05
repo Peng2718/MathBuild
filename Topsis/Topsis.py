@@ -6,9 +6,10 @@ def topsis(matrix):
     计算每个方案与其的距离来进行评价
     :param matrix: 输入矩阵，横坐标是评价准则，
     纵坐标是方案
+    :return score:方案的得分
     """
     # 获得
-    matrix = np.array(matrix)
+    matrix = np.array(matrix,dtype=float)
     col_norm = np.sqrt(np.sum(matrix**2,axis=0))
     matrix_1 = matrix/col_norm
     best = np.max(matrix_1,axis=0)
