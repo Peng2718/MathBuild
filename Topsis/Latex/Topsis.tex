@@ -1,0 +1,136 @@
+\documentclass{article}
+\usepackage[UTF8]{ctex}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!60!black},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    frame=single,
+    backgroundcolor=\color{gray!5},
+    breaklines=true,
+    captionpos=b
+}
+
+\begin{document}
+
+\title{数学建模TOPSIS法超通俗举例+完整步骤}
+\author{}
+\date{}
+\maketitle
+
+TOPSIS法是\textbf{多属性决策}方法，用来给多个对象打分排名，核心：找最优解、最劣解，算各对象到两者的距离，越靠近最优、越远离最劣排名越高。
+
+\section{举例场景}
+评价3个学生：数学、英语、体育3门成绩，\textbf{越高越好}，用TOPSIS排名。
+
+原始数据：
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{cccc}
+        \toprule
+        学生 & 数学 & 英语 & 体育 \\
+        \midrule
+        A & 80 & 90 & 70 \\
+        B & 90 & 85 & 80 \\
+        C & 70 & 80 & 90 \\
+        \bottomrule
+    \end{tabular}
+    \caption{学生成绩数据}
+    \label{tab:student_scores}
+\end{table}
+
+\section{完整计算步骤}
+
+\subsection{步骤1：数据正向化（本例全是高优，直接用）}
+
+\subsection{步骤2：归一化（统一量纲）}
+
+\begin{lstlisting}
+import numpy as np
+
+# 原始矩阵
+x = np.array([
+    [80, 90, 70],
+    [90, 85, 80],
+    [70, 80, 90]
+])
+
+# 每列平方和开根号
+col_norm = np.sqrt(np.sum(x**2, axis=0))
+# 归一化矩阵
+r = x / col_norm
+print("归一化矩阵：")
+print(np.round(r, 4))
+\end{lstlisting}
+
+\begin{verbatim}
+归一化矩阵：
+[[0.5744 0.6106 0.5026]
+ [0.6462 0.5767 0.5744]
+ [0.5026 0.5428 0.6462]]
+\end{verbatim}
+
+\begin{lstlisting}
+# 最优解（每列最大）
+best = np.max(r, axis=0)
+# 最劣解（每列最小）
+worst = np.min(r, axis=0)
+
+print("最优解：", np.round(best, 4))
+print("最劣解：", np.round(worst, 4))
+\end{lstlisting}
+
+\begin{verbatim}
+最优解： [0.6462 0.6106 0.6462]
+最劣解： [0.5026 0.5428 0.5026]
+\end{verbatim}
+
+\begin{lstlisting}
+# 到最优解距离
+d_best = np.sqrt(np.sum((r - best)**2, axis=1))
+# 到最劣解距离
+d_worst = np.sqrt(np.sum((r - worst)**2, axis=1))
+
+print("A/B/C到最优距离：", np.round(d_best, 4))
+print("A/B/C到最劣距离：", np.round(d_worst, 4))
+\end{lstlisting}
+
+\begin{verbatim}
+A/B/C到最优距离： [0.1605 0.0794 0.1588]
+A/B/C到最劣距离： [0.0988 0.1641 0.1436]
+\end{verbatim}
+
+\subsection{步骤3：确定最优解、最劣解}
+最优解：每列最大值  
+最劣解：每列最小值  
+
+\subsection{步骤4：计算各对象到最优、最劣的欧式距离}
+
+\subsection{步骤5：计算综合得分}
+公式：  
+得分 $S = \frac{劣距}{优距 + 劣距}$
+
+结果：
+- A：0.381
+- B：0.674
+- C：0.475
+
+\subsection{步骤6：排名}
+B > C > A
+
+\section{TOPSIS核心总结}
+1. 用途：多指标综合评价、排名选优  
+2. 关键：归一化+找两极+算距离+算得分  
+3. 优点：简单通用、结果稳定  
+
+\end{document}
